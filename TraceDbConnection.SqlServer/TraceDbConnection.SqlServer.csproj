@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <Version>0.1.0</Version>
+    <Copyright>Copyright © Dzianis Dziarkach 2019</Copyright>
+    <PackageLicenseUrl>https://github.com/DDzia/TraceDbConnection.SqlServer/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/DDzia/TraceDbConnection.SqlServer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/DDzia/TraceDbConnection.SqlServer</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>#selservertrace #sqlserver #sqltracing #tsql #tsqllogging</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Description>The SqlServerTraceReceiver wich adapted to pass TSQL for logging.</Description>
+    <PackageIconUrl>https://raw.githubusercontent.com/DDzia/TraceDbConnection.SqlServer/master/logo.png</PackageIconUrl>
+    <AssemblyName>TraceDbConnection.SqlServer</AssemblyName>
+    <RootNamespace>TraceDbConnection.SqlServer</RootNamespace>
+    <IsTestProject>false</IsTestProject>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TraceDbConnection" Version="0.1.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+  </ItemGroup>
+
+</Project>
