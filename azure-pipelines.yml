@@ -34,21 +34,26 @@ steps:
 - script: dotnet restore
   displayName: Restore packages
   name: Restore_packages
+  continueOnError: false
 - script: dotnet build TraceDbConnection.SqlServer/TraceDbConnection.SqlServer.csproj -f netstandard2.0 -c Release
   displayName: Build source project Standard2.0
   name: Build_source_project_standard20
+  continueOnError: false
 - script: dotnet build TraceDbConnection.SqlServer/TraceDbConnection.SqlServer.csproj -f net45 -c Release
   displayName: Build source project .NET Framework 4.5
   name: Build_source_project_NET_45
   condition: eq(variables['Agent.OS'], 'Windows_NT')
+  continueOnError: false
 - script: dotnet build TraceDbConnectionSqlServerTests/TraceDbConnectionSqlServerTests.csproj -f netcoreapp2.2 -c Release
   displayName: Build tests project
   name: Build_tests_project
+  continueOnError: false
 
 - task: VisualStudioTestPlatformInstaller@1
   condition: eq(variables['Agent.OS'], 'Windows_NT')
   displayName: Visual Studio Test Platform Installer
   name: vs_test_platform_installer
+  continueOnError: false
   inputs:
     packageFeedSelector: 'nugetOrg'
     versionSelector: 'latestPreRelease'
@@ -58,6 +63,7 @@ steps:
   condition: eq(variables['Agent.OS'], 'Windows_NT')
   displayName: Run VS tests
   name: run_vs_tests
+  continueOnError: false
   inputs:
     testSelector: 'testAssemblies'
     testAssemblyVer2: "**\\TraceDbConnectionSqlServerTests.dll\n!**\\obj\\**\n!**\\xunit.runner.visualstudio.testadapter.dll\n!**\\xunit.runner.visualstudio.dotnetcore.testadapter.dll"
@@ -68,6 +74,7 @@ steps:
   condition: ne(variables['Agent.OS'], 'Windows_NT')
   displayName: Run Core tests
   name: run_core_tests
+  continueOnError: false
   inputs:
     command: test
     projects: 'TraceDbConnectionSqlServerTests/TraceDbConnectionSqlServerTests.csproj'
