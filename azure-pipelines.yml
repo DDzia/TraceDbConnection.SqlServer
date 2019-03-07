@@ -1,19 +1,74 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- master
+  batch: true
+  branches:
+    include:
+    - master
+    - develop
+  paths:
+    exclude:
+    - .gitignore
+    - LICENSE
+    - README.md
+    - logo.png
+
+pr:
+  autoCancel: false
+  branches:
+    include:
+    - master
+    - develop
+
+strategy:
+  matrix:
+    linux:
+      imageName: 'ubuntu-16.04'
+    mac:
+      imageName: 'macos-10.13'
+    windows:
+      imageName: 'vs2017-win2016'
 
 pool:
-  vmImage: 'Ubuntu-16.04'
+  vmImage: $(imageName)
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- script: dotnet restore
+  displayName: Restore packages
+  name: Restore_packages
+- script: dotnet build TraceDbConnection.SqlServer/TraceDbConnection.SqlServer.csproj -f netstandard2.0 -c Release
+  displayName: Build source project Standard2.0
+  name: Build_source_project_standard20
+- script: dotnet build TraceDbConnection.SqlServer/TraceDbConnection.SqlServer.csproj -f net45 -c Release
+  displayName: Build source project .NET Framework 4.5
+  name: Build_source_project_NET_45
+  condition: eq(variables['Agent.OS'], 'Windows_NT')
+- script: dotnet build TraceDbConnectionSqlServerTests/TraceDbConnectionSqlServerTests.csproj -f netcoreapp2.2 -c Release
+  displayName: Build tests project
+  name: Build_tests_project
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: VisualStudioTestPlatformInstaller@1
+  condition: eq(variables['Agent.OS'], 'Windows_NT')
+  displayName: Visual Studio Test Platform Installer
+  name: vs_test_platform_installer
+  inputs:
+    packageFeedSelector: 'nugetOrg'
+    versionSelector: 'latestPreRelease'
+    testPlatformVersion: '16.0.1'
+
+- task: VSTest@2
+  condition: eq(variables['Agent.OS'], 'Windows_NT')
+  displayName: Run VS tests
+  name: run_vs_tests
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: "**\\TraceDbConnectionSqlServerTests.dll\n!**\\obj\\**\n!**\\xunit.runner.visualstudio.testadapter.dll\n!**\\xunit.runner.visualstudio.dotnetcore.testadapter.dll"
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+    codeCoverageEnabled: True
+
+- task: DotNetCoreCLI@2
+  condition: ne(variables['Agent.OS'], 'Windows_NT')
+  displayName: Run Core tests
+  name: run_core_tests
+  inputs:
+    command: test
+    projects: 'TraceDbConnectionSqlServerTests/TraceDbConnectionSqlServerTests.csproj'
+    arguments: '-c Release -f netcoreapp2.2'
