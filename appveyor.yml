@@ -1,0 +1,50 @@
+version: "0.1.{build}"
+
+image: Visual Studio 2017
+
+platform: Any CPU
+configuration: Release
+
+
+init:
+  - cmd: git config --global core.autocrlf true
+
+# patching new .csproj files format
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: "{version}"
+  package_version: "{version}"
+  assembly_version: "{version}"
+  file_version: "{version}"
+  informational_version: "{version}"
+  
+before_build:
+  - cmd: dotnet --version
+  - cmd: dotnet restore -v m
+  
+test_script:
+  - cmd: dotnet test -c Release -v minimal
+
+after_test:
+ - cmd: dotnet pack .\TraceDbConnection.SqlServer\TraceDbConnection.SqlServer.csproj -c Release -v m
+
+artifacts:
+  - path: .\**\*.nupkg
+    name: NuGet
+
+deploy:
+  - provider: Environment
+    name: Nuget
+    artifact: "*.nupkg"
+    skip_symbols: false
+    on:
+      branch: master
+      APPVEYOR_REPO_TAG: false
+  - provider: Environment
+    name: GitHub
+    artifact: "*.nupkg"
+    skip_symbols: false
+    on:
+      branch: master
+      APPVEYOR_REPO_TAG: false
