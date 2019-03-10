@@ -1,3 +1,3 @@
 # TraceDbConnection.SqlServer
 
-[![Build Status](https://dev.azure.com/ddzia0829/TraceDbConnection.SqlServer/_apis/build/status/DDzia.TraceDbConnection.SqlServer?branchName=master)](https://dev.azure.com/ddzia0829/TraceDbConnection.SqlServer/_build/latest?definitionId=2&branchName=master)
+[![Build status](https://ci.appveyor.com/api/projects/status/j9wd9jj36042xbqm/branch/master?svg=true)](https://ci.appveyor.com/project/DDzia/tracedbconnection-sqlserver/branch/master)
