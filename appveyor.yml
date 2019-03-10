@@ -42,7 +42,7 @@ deploy:
       branch: master
       APPVEYOR_REPO_TAG: false
   - provider: Environment
-    name: GitHub
+    name: GitHubReleasesTraceDbConnectionSqlServer
     artifact: "*.nupkg"
     skip_symbols: false
     on:
